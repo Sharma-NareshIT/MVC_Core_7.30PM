@@ -1,0 +1,155 @@
+Ex: Model Views with Object Data and Navigation
+
+1. Create a new Empty MVC Project by name
+	       "ModelDemo"
+2. Install the Package "Bootstrap"
+3. Create a new Folder "Images" and add existing Images 
+	 - tv.jpg, shoe.jpg
+4. Goto Models folder and add following classes
+	- Category.cs
+	- CategoriesData.cs
+	- Product.cs
+	- ProductsData.cs
+5. Category.cs [code]
+
+   public class Category
+    {
+        public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
+    }
+
+6. CategoriesData.cs
+
+    public class CategoriesData
+    {
+        List<Category> categories = new List<Category>()
+        {
+            new Category { CategoryId=1, CategoryName="Electronics"},
+            new Category { CategoryId=2, CategoryName="Shoes"}
+        };
+      public IEnumerable<Category> GetCategories
+        {
+            get
+            {
+                return categories;
+            }
+        }
+    }
+7. Product.cs 
+
+ public class Product
+    {
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public double Price { get; set; }
+        public string Photo { get; set; }
+        public int Category_CategoryId { get; set; }
+    }
+
+8. ProductsData.cs
+
+ public class ProductsData
+    {
+        List<Product> products = new List<Product>()
+        {
+            new Product{ ProductId=1, Name="Samsung TV", Price=45000.55, Photo="~/Images/tv.jpg", Category_CategoryId=1},
+            new Product{ ProductId=2, Name="Nike Casuals", Price=5000.55, Photo="~/Images/shoe.jpg", Category_CategoryId=2},        
+        };
+        public IEnumerable<Product> GetProducts
+        {
+            get
+            {
+                return products;
+            }
+        }
+    }
+9. Add a new Controller By name
+	  "CategoriesController"
+
+using ModelDemo.Models;
+ public class CategoriesController : Controller
+    {
+        CategoriesData db = new CategoriesData();
+        public ViewResult Index()
+        {
+            return View(db.GetCategories);
+        }
+    }
+10. Add View for Categories  Index method
+	        "Index.cshtml"
+@model  IEnumerable<ModelDemo.Models.Category>
+<head>
+<link rel="stylesheet" href="~/Content/bootstrap.css>
+</head>
+<body>
+    <div class="container-fluid"> 
+        <h2>Categories List</h2>
+        <ol>
+            @foreach(var item in Model)
+            {
+           <li>@Html.ActionLink(item.CategoryName, "Index", "Products", new { id=item.CategoryId },null)</li>
+            }
+        </ol>
+    </div>
+</body>
+11. Add a new Controller by name
+	     "ProductsController"
+ using ModelDemo.Models;
+ public class ProductsController : Controller
+    {
+        ProductsData db = new ProductsData();
+
+        public ViewResult Index(int id)
+        {
+            List<Product> products = db.GetProducts.Where(x => x.Category_CategoryId == id).ToList();
+            return View(products);
+        }
+        public ViewResult Details(int id)
+        {
+            return View(db.GetProducts.Single(x=>x.ProductId==id));
+        }
+    }
+12. Add View for Products Index action
+	    "Index.cshtml"
+ @model  IEnumerable<ModelDemo.Models.Product>
+<head>
+  <!-- link bootstrap.css -->
+</head>
+<body>
+    <div class="container-fluid"> 
+        <h2>Products List</h2>
+        <ol>
+            @foreach(var item in Model)
+            {
+          <li>@Html.ActionLink(item.Name, "Details", new { id=item.ProductId })</li>
+            }
+        </ol>
+        <div>
+          @Html.ActionLink("Back to Categories", "Index","Categories")
+        </div>
+    </div>
+</body>
+13. Add View for Product Details action
+	      "Details.cshtml"
+@model  ModelDemo.Models.Product
+<head>
+ <!-- link bootstrap.css -->
+</head>
+<body>
+  <div class="container-fluid">
+        <h2>Product Details</h2>
+        <div class="card">
+            <div class="card-header">
+                <h2>@Model.Name</h2>
+            </div>
+            <div class="card-body">
+                <img src='@Url.Content(Model.Photo)' width="200" height="200" />
+            </div>
+            <div class="card-footer">
+                <h3> &#8377; @Model.Price</h3>
+               @Html.ActionLink("Back to Products", "Index", new { id=Model.Category_CategoryId })
+            </div>
+        </div>
+    </div>
+</body>
+         
