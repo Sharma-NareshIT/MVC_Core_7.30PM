@@ -1,0 +1,143 @@
+Configuring Route in MVC Application:
+1. Goto "App_Start" folder and add a new File by name
+	        "RouteConfig.cs"
+
+using System.Web.Mvc;
+using System.Web.Routing;
+
+ public class RouteConfig
+    {
+        public static void RegisterRoutes(RouteCollection routes)
+        {
+           // your routes
+         }
+    }
+
+2. Goto "Global.asax"  configure
+
+using System.Web.Mvc;
+using System.Web.Routing;
+
+ protected void Application_Start()
+        {
+         RouteConfig.RegisterRoutes(RouteTable.Routes);
+        }
+
+Define Route for your MVC Application:
+1. Goto "RouteConfig.cs"
+2. In Register Routes Methods add routes
+
+    routes.MapRoute("RouteName", "Url", new Defaults { });
+
+Ex1: Short Hand Style
+ public static void RegisterRoutes(RouteCollection routes)
+        {
+        routes.MapRoute("Demo", "{controller}/{action}", new { controller = "Home", action = "Index" });
+        }
+
+Ex2: Detailed Route
+
+public static void RegisterRoutes(RouteCollection routes)
+        {
+            routes.MapRoute(
+                 name: "Demo",
+                 url: "{controller}/{action}",
+                 defaults: new { controller="Products", action="Index" }
+                );
+        }
+
+Route Parameters:
+- We have to use QueryString to pass values into any method.
+- MVC allows to define route parameters instead of QueryString.
+- Without parameter route url will be like this
+         url: "{controller}/{action}",
+- If parameter is not defined in url of route then we have to pass it in the addressbar as query string.
+
+Ex:
+        public string Details(string name)
+        {
+            return "Product Name = " + name;
+        }
+
+http://localhost:54996/Products/Details?name=Mobile
+
+- MVC allows to configure parameters in the route by using route parameter technique.
+
+         url : {controller}/{action}/{paramName}
+
+         url : {controller}/{action}/{name}
+
+- Every Parameter you define in route config url is mandatory for every action menthod by default.
+
+- You have configure your parameter as optional parameter.
+
+Syntax:
+             defaults: new { name =UrlParameter.Optional}
+
+Ex:
+  routes.MapRoute(
+                 name: "Demo",
+                 url: "{controller}/{action}/{name}",
+                 defaults: new { controller="Products", action="Index", name=UrlParameter.Optional }
+                );
+
+   http://localhost:port/Products/Details/Mobile
+
+- Multiple Parameters
+
+Ex:
+url: "{controller}/{action}/{name}/{price}",
+
+ http://localhost:port/Products/Details/Mobile/12000
+
+- URL parameter is optional but not optional in method if it is a value type. For optional parameters in method you have to use "null reference"
+	 
+      public  string Details(int? id, string name, price? decimal) {
+      }
+
+
+- Assign Constant values to the parameters. You can initialize values into parameters.
+
+Syntax:
+                 url: "{controller}/{action}/{name}/{price}",
+                 defaults: new { controller="Products", action="Index", name=UrlParameter.Optional, price=45000 }
+
+- You can assign constant values to the parameters directly in the method.
+
+public string Details(string name="TV", double price=40000.53)
+        {
+        return "Name = " + name + "<br>" + "Price=" + price;
+        }
+
+- If you configure parameter in route.config file then every method have to handle only those parameter names.
+
+- How to handle various parameters for various methods.
+
+- Better we can use Route Attributes.
+
+Route Attributes:
+- Introduced into MVC from 5.
+- Route attribute allows to configure route for every method individually.
+- You define by using
+	[Route()]
+
+Syntax:
+        [Route("{Products}/{Details}/{name}/{price}")]
+        public string Details(string name, double price)
+        {
+            return "Name = " + name + "<br>" + "Price=" + price;
+        }
+
+Note: Attribute route is not enabled by default, you have enable by add following method in "RegisterRoutes()"
+
+public static void RegisterRoutes(RouteCollection routes)
+        {
+          routes.MapMvcAttributeRoutes();
+          ...........
+        }
+
+Route Constraints:
+
+
+
+
