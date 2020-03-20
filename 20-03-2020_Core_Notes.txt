@@ -1,0 +1,96 @@
+		.NET
+- .NET is an advanced new generation software that drives the next generation internet. Its purpose is to make information available any time, any place and on any device.
+- .NET is an developers platform that provides all tools and utilities to build, debug, test and deploy applications.
+
+		.NET Core
+- It is an open source, free, cross platform, developers platform for building various types of applications.
+- .NET core is a single software solution for building any type of application.
+- Types of Applications
+	a) DeskTop
+	b) Web
+	c) Distributed
+	d) Gaming
+	e) AI
+	f) IOT
+- .NET core is a complete re-construction of previous .NET.
+- Last version of .NET Framework  4.7,  4.8
+- .NET Core 1.0 and latest version  3.1
+- .NET Core comes with 2 frameworks
+
+	a) .NET Framework [Traditional]
+	     for building windows based application
+	     it is not open source.
+	b) .NET Core
+	     for building cross platform application
+	     it is open source.
+
+ASP.NET Core [WebForms + MVC + API]:
+
+- Asp.Net core is a cross platform, high-preformance, open source framework for building modern, colud-based, internet-connected applications.
+
+-ASP.NET Core can
+
+    a) Build web apps and services, IoT apps, and
+        mobile backends.
+    b) Build applications for every platform i.e
+        windows, macOC, and Linux.
+     c) Deploy to the cloud or on-permises.
+     d) Run on .NET Core or  .NET Framework
+     e) Combination of  WebForm + API + MVC
+
+Features of ASP.NET Core:
+======================
+1. A unified process for building Web UI and Web API's.
+2. Unifies  WebForm + MVC + API
+3. Arichtectured for Testability.
+4. Razor Pages instead of ASPX
+5. More focus on client side UI by reducing the burdern on server.
+6. Modular Library [not Legacy Library]
+7. Blazor that allows to use C# client side along with JavaScript. [C# in browser].
+8. Cloud Ready environment - deploy on cloud.
+9. Light weight, high performance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
