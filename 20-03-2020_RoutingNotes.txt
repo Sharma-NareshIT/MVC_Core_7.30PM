@@ -1,0 +1,39 @@
+Configure Routes
+Route Parameters
+Attribute Routes
+Route Constraints
+- A constraint allows to define restriction for route parameters.
+- By default route parameters will allow any value and throws exeception if it is invalid value.
+- If it is string type it can access use any value.
+
+Syntax:
+                {paramName:int}
+                {paramName:range(min, max)}
+                {paramName:const1:const2 }
+
+Constraint	Description
+===========================================
+alpha		alphabet [A-Za-z]
+int
+float
+double
+decimal
+maxlength
+minlength
+max
+min
+range
+regexp
+
+Ex:
+ [Route("{Products}/{Details}/{id:int:range(1,10)}/{name:alpha:maxlength(4)}/{price:double:range(10000,40000)}")]
+        public string Details(int id, string name, double price)
+        {
+            return "Id=" + id + "<br>" + "Name = " + name + "<br>" + "Price=" + price;
+        }
+
+Q.Can We Configure route constraint in route config?
+A. Yes
+
+              url: "{controller}/{action}/{id:int}", 
+
