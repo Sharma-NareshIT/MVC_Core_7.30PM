@@ -1,0 +1,171 @@
+Features of ASP.NET Core:
+======================
+1. A unified process for building Web UI and Web API's.
+
+2. Unifies  WebForm + MVC + API
+
+3. Arichtectured for Testability.
+
+4. Razor Pages instead of ASPX
+
+5. More focus on client side UI by reducing the burdern on server.
+
+6. Modular Library [not Legacy Library]
+
+7. Blazor that allows to use C# client side along with JavaScript. [C# in browser].
+
+8. Cloud Ready environment - deploy on cloud.
+
+9. Light weight, high performance.
+
+10. Built-in Dependency Injection
+
+11. Support for hosting Remote Procedure Call (RPC) by using services of gRPC.
+
+12. Ability of hosting on various sources
+      - IIS
+      - Kestrel
+      - HTTP.sys
+      - Nginx
+      - Apache
+      - Docker
+
+13. Side by Side Versioning 
+      [True side by side execution]
+
+Note: ASP.NET Core is an alternative for ASP.NET 4x
+
+Which one to Choose?
+
+ASP.NET Core	         ASP.NET 4x
+============================================
+Build for Windows,           Build for windows
+masOs or Linux
+
+Razor Pages	        ASPX for WebForm,
+web UI, MVC,	        Razor for MVC
+Web API, SignalR
+
+Multiple versions	        One version per machine
+per mechine
+
+Develop using	         Visual Studio C#, VB, F#
+VS, VS Mac,
+VS Code using C#
+and F#
+
+High Performance than      Performance is Good
+4x version
+
+
+Setup Environment for .NET Core
+============================
+1. Visual Studio 2019
+2. Download latest version of .NET Core "3.1"
+
+     https://dotnet.microsoft.com/download
+
+3. Download 3.1  SDK
+
+Test Dotnet core by using CLI Command:
+==================================
+1. Goto Command Prompt
+        Run --> CMD
+2.  Type "dotnet"
+          C:\>dotnet
+
+Dotnet Command Line Tool [ CLI ]:
+============================
+ It is a command line tool provide by microsoft from .NET core version. SO that developers can handle the application from command line.
+
+CLI Commands:
+1. Basic Commands
+	- new
+	- restore
+	- build
+	- publish
+	- run
+	- test
+	- vstest
+	- pack
+	- migrate
+	- clean
+	- sln
+	- help
+	- store
+2. Project modificiation commands
+	- add package
+	- add reference
+	- remove package
+	- remove reference
+	- list reference
+3. Advanced Commands
+	- nuget delete
+	- nuget locals
+	- nuget push
+	- msbuild
+	- dotnet install script
+4. Tool Management Commands
+	- tool install
+	- tool list
+	- tool update
+	- tool restore
+	- tool run
+	- tool uninstall
+
+	               "dotnet new" 
+ It is a CLI command used to create a new .net project
+
+                > dotnet  new  <ProjectTemplate>
+                > dotnet  run
+                > dotnet  build
+
+Template			                    Command
+============================================
+Console Application		          console
+Class Library		                classlib
+WPF Application	              	wpf
+WPF Class Library		              wpflib
+WPF Custon Control Lib           wpfcustomcontrollib
+Windows Form Application	        winforms
+Windows Form Class Library	      winformslib
+Worker Service		              worker
+Unit Test Project		            mstest
+NUnit 3 Test Project		         nunit -test
+xUnit Test Project		          xunit
+Razor Component		              razorcomponent
+Razor Page	                    	page
+Mvc View Imports		viewimports
+Mvc ViewStart		viewstart
+Blazor Server App		blazorserver
+ASP.NET Core Empty Project	web
+ASP.NET Core MVC Application   mvc
+ASP.NET Web App		 webapp, razor
+ASP.NET Core with Angular	 angular
+ASP.NET Core with React.js	 react
+ASP.NET Core with React & 	 readtredux
+Redux
+Razor Class Library		razorclasslib
+ASP.NET Core Web API	webapi
+ASP.NET Core gRPC Service	grpc
+WebConfig		webconfig
+Solution file		sln
+
+Ex: Creating a new .NET Core Console Application
+
+1. Open any location on your computer and create a new folder
+	 C:\ConsoleApp
+
+2. Open the folder in command prompt
+
+3. Type the following
+	> dotnet  new  console
+                     [this will create a new console app]
+
+4. Goto the folder and open "Program.cs" in notepad
+5. Change the output statement
+
+      Console.WriteLine("Welcome to .NET Core");
+
+6. Run Console Application
+	> dotnet  run
