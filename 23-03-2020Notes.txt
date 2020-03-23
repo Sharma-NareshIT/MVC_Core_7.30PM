@@ -1,0 +1,92 @@
+	            ASP.NET Core 3.1
+What's new in ASP.NET Core 3.1?
+- Partial class support for Razor components
+- Blazor Component Tag Helper 
+- Hosting on Http.sys
+- Support for shared queues in Http.sys
+- New features added into "SameSite" cookies
+- Integration with Blazor for errors, blazor apps in ASP.NET Core.
+
+Creating ASP.NET Core MVC Application:
+1. From CLI Tool
+        > dotnet   new  mvc
+
+2. From your Visual Studio
+    - Open Visual Studio
+    - Select "Create New Project"
+    - Select the template 
+           "ASP.NET Core Web Application"
+    - Project Name
+	MvcCoreDemo
+    - Select Framework as               :  ".NET Core"
+    - Select ASP.NET Core Version  :  3.1
+    - Choose the template 
+         "Web Application [Model-View-Controller]"
+    - UnCheck "Configure for Https"
+    - Click "Create"
+
+Project Infrastructure:
+
+Component		Description
+===========================================
+Connected Services       It allows to configure the
+		      3rd party services, which are
+		      connected to your MVC 
+		      Application. Services like
+		      Web API, WCF, Azure Cloud.
+
+Dependecies	      It is a collection of references
+		      You can configure, add and
+		      maintain any refernce. 
+		      [NuGet Package Manager]
+
+Properties	      It contains meta data.
+		      Copyrights, Version, Culture,
+		      Hosting, Urls, Servers
+
+wwwRoot		      It comprises of all your 
+		      project resources i.e both
+		      dynamic and non-dynamic.
+		      Like Scripts, CSS, Images.
+
+Controllers	      It contains controller classes.
+		      Application specific logic.
+
+Models		      It contains model classes
+		      data specific logic.
+
+Views		      It comprises application UI
+		      [View, Layouts, Partial views]
+
+appSettings.json	      It is our application 		      		      configuration file. (same like
+		      webconfig). AppSettings,
+		      ConnectionStrings etc..
+
+Program.cs	      It is used to defines 		      configuration for 		     development, production and
+		      testing.
+
+Startup.cs	      Middleware Configuration 		      file. Routing, Bundling, 
+		      Cookies, Caching, 		      Authentication etc.
+
+
+Adding a Controller in MVC Core:
+1. Manually
+   - Goto Controllers folder
+   - Right Click on Controllers --> Add --> New Class
+                    Name : ProductsController.cs
+   - Add class
+
+    using Microsoft.AspNetCore.Mvc;
+    public class ProductsController : Controller
+    {
+       // Action Methods
+    }
+
+
+2. Scaffolding
+    - Right CLick on "Controllers" folder
+    - Add --> New --> Controller
+    - Select "Mvc Controller Empty"
+    - Name "CategoriesController"
+
+Note: Routing is Defined in "Startup.cs"
