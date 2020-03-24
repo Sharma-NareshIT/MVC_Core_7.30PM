@@ -1,0 +1,130 @@
+Action Methods in MVC Core:
+- All action methods rules are same as MVC 5.
+- The action methods in MVC use "Asynchronous" techniques.
+- C# 4.0 introduced "Task Parallel Library"
+- .NET Applications are by default MultiThreaded, which comprises of a main thread and a garbage collector thread.
+- Using lot of threads in an application usually will slow down the application.
+- Better to use "Asynchronous Approach".
+
+Ex: ForEach  & Parallel.ForEach [Console Application]
+
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    namespace ParallelForEachExample
+    {
+        class Program
+        {
+            static void Main()
+            {
+                string[] colors = {
+                                      "1. Red",
+                                      "2. Green",
+                                      "3. Blue",
+                                      "4. Yellow",
+                                      "5. White",
+                                      "6. Black",
+                                      "7. Violet",
+                                      "8. Brown",
+                                      "9. Orange",
+                                      "10. Pink"
+                                  };
+     Console.WriteLine("Traditional foreach loop\n");
+     
+                var sw = Stopwatch.StartNew();
+                 foreach (string color in colors)
+                {
+                Console.WriteLine("{0}, Thread Id= {1}", color, Thread.CurrentThread.ManagedThreadId);
+                Thread.Sleep(10);
+                }
+                Console.WriteLine("foreach loop execution time = {0} seconds\n", sw.Elapsed.TotalSeconds);
+                Console.WriteLine("Using Parallel.ForEach");
+                 sw = Stopwatch.StartNew();
+                 Parallel.ForEach(colors, color =>
+                {
+                 Console.WriteLine("{0}, Thread Id= {1}", color, Thread.CurrentThread.ManagedThreadId);
+                    Thread.Sleep(10);
+                }
+                );
+                Console.WriteLine("Parallel.ForEach() execution time = {0} seconds", sw.Elapsed.TotalSeconds);
+                Console.Read();
+            }
+        }
+    }
+
+- The Asynchronous library will use an "Non-Blocking" technique so that the request can be handled and processed without locking the task.
+
+- In Synchronous apporach all other tasks are locked when any one task is being processed
+
+- Members of Task Parallel Library
+
+Member		Description
+============================================
+async	        It specifies the method that executes
+	        as main task.
+
+Task<>	        It defines the task which is performed
+	        as child task. It also defines the 
+	        the return value of task, hence it is
+	        defined as generic type.
+
+ await	        It is used to execute the task without
+	        blocking the process.
+
+Ex: Synchronous
+
+1. Create a new Text File and Save in your dirve
+	C:\Mvc5\help.txt
+2. Create a new Windows Forms Application
+3. Add Following control into form
+
+            [ Read File Content ] --> Button1
+            [ Label1 ]
+
+4. Code
+using System;
+using System.Windows.Forms;
+using System.IO;
+using System.Threading;
+
+namespace WindowsFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        int count = 0;
+        private int GetCount()
+        {
+            using (StreamReader reader = new StreamReader("C:\\Mvc5\\help.txt"))
+            {
+                string content = reader.ReadToEnd();
+                count = content.Length;
+                Thread.Sleep(8000);
+            }
+            return count;
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            label1.Text = "Reading Please Wait..";
+            int count = GetCount();
+            label1.Text = "Total No of Chars : " + count.ToString();
+        }
+    }
+}
+Note: When you click the button , it starts reading data from while, during this time your can handle any another task in the application. [Sync]
+
+Ex: Asynchronous - Just Change the button click
+
+ private async void button1_Click(object sender, EventArgs e)
+        {
+            Task<int> task = new Task<int>(GetCount);
+            task.Start();
+            label1.Text = "Reading Please Wait..";
+            int count = await task;
+            label1.Text = "Total No of Chars : " + count.ToString();
+        }
