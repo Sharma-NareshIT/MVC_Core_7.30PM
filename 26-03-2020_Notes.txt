@@ -1,0 +1,147 @@
+ViewResult in MVC Core:
+- It is used to return a view to the response.
+- Derived from IActionResult Base
+- It uses IViewEngine  and IView object.
+- IViewEngine  is a collection of ViewEngines that verifies and enables the view engine.
+- IView is for finding a view and return the view as response by using "View()" method.
+- In Mvc Core we have new file in "Views" folder by name
+	       "_ViewImports.cshtml"
+- It is a special file newly available in .NET Core where your can import the library, which can be directly accessed from any view, without defining fully qualified name.
+- In views you can directly access the classes without fully qualified name.
+
+Note: ViewImports is only for Views not for controllers.
+  ToListAsync()  :  EntityFramework Core library
+
+- In MVC 5 Views links are defined by using
+	@Html.ActionLink("LinkText", "ActionName", "ControllerName", new { id="" })
+
+- In Mvc Core Views links are defined by using <a> anchor tag Helper.
+
+ <a  asp-controller="controllerName" asp-action="actionName"  asp-route-paramName="value"> Text </a>
+
+Ex:
+1. Create a new MVC Core Project
+2. Add following Model classes
+	              "Category.cs"
+namespace MvcCoreViews.Models
+{
+    public class Category
+    {
+        public int CategoryId { get; set; }
+        public string Name { get; set; }
+    }
+}
+
+	              "Product.cs"
+namespace MvcCoreViews.Models
+{
+    public class Product
+    {
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public double Price { get; set; }
+        public int Category_CategoryId { get; set; }
+    }
+}
+	           "ShoppingDataSource.cs"
+namespace MvcCoreViews.Models
+{
+    public class ShoppingDataSource
+    {
+        public IEnumerable<Category> GetCategories
+        {
+            get
+            {
+                List<Category> categories = new List<Category>()
+                {
+                    new Category { CategoryId=1, Name="Electronics"},
+                    new Category { CategoryId=2, Name="Shoes"}
+                };
+                return categories;
+            }
+        }
+        public IEnumerable<Product> GetProducts
+        {
+            get
+            {
+                List<Product> products = new List<Product>()
+                {
+                    new Product { ProductId=1, Name="Samsung TV", Price=45000.55, Category_CategoryId=1},
+                    new Product { ProductId=2, Name="Mobile", Price=34000.42, Category_CategoryId=1},
+                    new Product { ProductId=3, Name="Nike Casulas", Price=4300.44, Category_CategoryId=2},
+                    new Product { ProductId=4, Name="Lee Cooper Boot", Price=5600.44, Category_CategoryId=2},
+                };
+                return products;
+            }
+        }
+    }
+}
+3. Add a new controller
+	               "CategoriesController"
+using MvcCoreViews.Models;
+public class CategoriesController : Controller
+    {
+        ShoppingDataSource db = new ShoppingDataSource();
+        public async Task<ViewResult> Index()
+        {
+           List<Category> categories = db.GetCategories.ToList();
+           return View(categories);
+        }
+    }
+
+4. Add View for  Index action
+	        "Index.cshtml"
+@model IEnumerable<Category>
+
+<h2>Categories List</h2>
+<ol>
+    @foreach(var item in Model)
+    {
+        <li><a asp-controller="Products" asp-action="Index" asp-route-id="@item.CategoryId" >@item.Name</a></li>
+    }
+</ol>
+
+5. Add a new COntroller by name
+	         "ProductsController"
+using MvcCoreViews.Models;
+ public class ProductsController : Controller
+    {
+        ShoppingDataSource db = new ShoppingDataSource();
+        public async Task<ViewResult> Index(int id)
+        {
+            List<Product> products = db.GetProducts.Where(x => x.Category_CategoryId == id).ToList();
+            return View(products);
+        }
+        public async Task<ViewResult> Details(int id)
+        {
+            return View(db.GetProducts.Single(x=>x.ProductId==id));
+        }
+    }
+
+6. Add View for Products Index
+		Index.cshtml
+@model  IEnumerable<Product>
+
+<h2>Products List</h2>
+<ol>
+    @foreach(var item in Model)
+    {
+        <li><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">@item.Name</a></li>
+    }
+</ol>
+<a asp-controller="Categories" asp-action="Index">Back to Categories</a>
+
+7. Add View for Products Details
+	        "Details.csthml"
+@model Product
+
+<h1>Details</h1>
+<dl>
+    <dt>Product Id</dt>
+    <dd>@Model.ProductId</dd>
+    <dt>Name</dt>
+    <dd>@Model.Name</dd>
+    <dt>Price</dt>
+    <dd>@Model.Price</dd>
+</dl>
+<a asp-controller="Products" asp-action="Index" asp-route-id="@Model.Category_CategoryId">Back to Products Index</a>
