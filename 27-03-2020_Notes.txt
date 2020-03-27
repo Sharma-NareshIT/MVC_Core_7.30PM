@@ -1,0 +1,207 @@
+	              MVC Core Tag Helpers
+- MVC 5 uses HTML Helpers
+- HTML Helpers are methods that render HTML elements.
+- ASP.NET Core introduced Tag Helpers
+- Tag Helpers allows dynamic configuration directly on HTML elements.
+- Tag Helpers will provide attributes that are required to make the HTML element dynamic.
+- Tag Helpers are used in Views, Partial Views and Layouts.
+- Tag Helpers require configuration of library in
+	"_ViewImports.cshtml"
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+- Tag Helpers Provided by MVC Core
+	a) Anchor
+	b) Cache
+	c) Component
+	d) Distributed Cache
+	e) Environment
+	f) Form
+	g) FormAction
+	h) Image
+	i) Input
+	j) Label
+	k) Link
+	l) Partial
+	m) Script
+	n) Select
+	o) TextArea
+	p) Validation Message
+	q) Validation Summary
+
+1. Anchor Tag Helper:
+    It creates an HTML anchor <a> Element that can dynamically handle MVC redirections from View.
+    
+Attributes:
+========
+1. asp-controller ]   Specifies the controller and 
+2. asp-action       ]   action name for redirection.
+          
+Syntax:
+  <a asp-controller="ControllerName"  asp-action="ActionName">  Text / Image </a>
+
+Ex:
+ <a asp-controller="Products" asp-action="Index">
+        Products Index
+ </a>
+
+3. asp-route-{param}  : It allows to pass a value as querystring. i.e a parameter into controller method.
+
+Syntax:
+<a  asp-controller="Products"  asp-action="Details" asp-route-id="1">  Details of 1 <a/>
+
+4. asp-route: 
+It uses a route name for navigation instead of using the controller and action name. 
+It requires to define a route name for your controller method by using "Route" attribute.
+
+Syntax:
+       <a asp-route="RouteName"> Text </a>
+
+Ex:
+1. Goto Categories Controller and Add attribute route
+
+public class CategoriesController : Controller
+    {
+     [Route("/Categories/Index", Name = "CategoriesIndex")]
+        public async Task<ViewResult> Index()
+        {
+           ...........
+        }
+    }
+
+5. asp-all-route-data
+- To pass single parameter and value you can use
+         "asp-route-paramName=value"
+- To pass multiple parameters and values into any action method your can use
+          "asp-all-route-data"
+- It requires a dictionary type collection to create.
+- You have to create a dictionary collection of Keys and Values and pass them into method.
+
+Ex:
+1. Add Controller by name DemoController
+
+    public class DemoController : Controller
+    {
+        public ViewResult Index() => View();
+        public ViewResult Details(int id, string name)
+        {
+            ViewBag.id = id;
+            ViewBag.name = name;
+            return View();
+        }
+    }
+
+2. Add View for Index action
+	      "Index.cshtml"
+<h2>Demo Index</h2>
+<!--Create a collection of Params [Key/Value]-->
+
+@{ 
+    var parameters = new Dictionary<string, string>
+    {
+        { "id", "1" },
+        { "name","Samsung TV" }
+    };
+}
+<a asp-controller="Demo" asp-action="Details" 
+asp-all-route-data="parameters">Goto Details</a>
+
+<!--<a href="Demo/Details/1/name=samsungtv></a> -->
+
+3. Add View for Details
+	         "Details.cshtml"
+<h1>Details</h1>
+<dl>
+    <dt>Product Id</dt>
+    <dd>@ViewBag.id</dd>
+    <dt>Name</dt>
+    <dd>@ViewBag.name</dd>
+</dl>
+
+6. asp-fragment :
+    ============
+   - It is used to handle intra document navigation
+   - The anchor element uses "#" reference to navigate to any location with in the page.
+   - It refers an ID by using "#"
+ 
+Syntax:
+	<h2 id="csharp"> C# </h2>
+
+	<a asp-controller="Demo" asp-action="Tutorial" asp-fragment="cshar"> C# </a>
+
+
+Ex:
+1. Add a new method in "DemoController"
+
+	 public ViewResult Tutorial() => View();
+
+2. Add View for Tutorial method
+	      "Tutorial.cshtml"
+
+<style>
+    .leftPanel {
+        width:200px;
+        height:400px;
+        margin-left:20px;
+        padding:20px;
+        border:2px solid darkcyan;
+        float:left;
+    }
+    .rightPanel {
+        width:70%;
+        height:400px;
+        margin-left:20px;
+        padding:20px;
+        border:2px solid darkcyan;
+        float:left;
+        overflow:scroll;
+    }
+</style>
+
+<div class="leftPanel">
+    <ul>
+        <li><a asp-controller="Demo" asp-action="Tutorial" asp-fragment="csharp">C# 8 Basics</a></li>
+        <li><a asp-controller="Demo" asp-action="Tutorial" asp-fragment="aspcore">ASP.NET Core</a></li>
+        <li><a asp-controller="Demo" asp-action="Tutorial" asp-fragment="blazor">Blazor</a></li>
+    </ul>
+</div>
+<div class="rightPanel">
+    <h2 id="csharp">C# 8 Basics</h2>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+    <h2 id="aspcore">ASP.NET Core</h2>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+    <h2 id="blazor">Blazor</h2>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+    <p>
+        Depending on how you obtained the Windows software, this is a license agreement between (i) you and the device manufacturer or software installer that distributes the software with your device; or (ii) you and Microsoft Corporation (or, based on where you live or, if a business, where your principal place of business is located, one of its affiliates) if you acquired the software from a retailer. Microsoft is the device manufacturer for devices produced by Microsoft or one of its affiliates, and Microsoft is the retailer if you acquired the software directly from Microsoft. Note that if you are a volume license customer, use of this software is subject to your volume license agreement rather than this agreement.
+    </p>
+</div>
