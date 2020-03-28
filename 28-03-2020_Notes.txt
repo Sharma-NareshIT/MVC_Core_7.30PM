@@ -1,0 +1,139 @@
+Anchor Tag Helper and Its Attributes
+
+asp-protocol: It specifies the protocol to be used for navigation to any another application on remote server. It can be  Http, Https, file etc..
+
+Syntax:
+     <a asp-protocol="https"> 
+
+asp-host: It specifies the server name or IP address to be used for locating the remove server.
+
+Syntax:
+     <a asp-host="localhost">
+     <a asp-host="127.0.0.1">
+
+Ex:
+<a asp-protocol="https" asp-host="microsoft.com" asp-controller="Home" asp-action="About"> Microsoft Site
+</a>
+
+2. Partial Tag Helper
+==================
+- Partial Tag Helper is used for rendering a partial to the response.
+- It can render a partial view within another view.
+- It is an alternative for previous
+	@Html.Partial()
+	@Html.RenderPartial()
+- In .NET core to access partial view they introduced async methods.
+	@await Html.PartialAsync()
+	@await Html.RenderPartialAsync()
+- In latest versions from .NET core 2.1 and above they introduced "Partial" tag helper.
+
+- Attributes for Partial Tag Helper
+
+a) name	
+b) for
+c) model
+d) view-data
+
+name : It referes to the partial view name i.e the path and file name.
+
+for : It refers the model object that contains the data for partial view.
+
+Syntax:
+ <partial  name="~/Views/Shared/_viewName.cshtml" for="@modelName" />
+
+Note: .NET core started using Partial Views with "async methods"
+ 	@await Html.Partial()
+	@await Html.RenderPartial()
+
+Syntax:
+ @foreach(var item in Model)
+    {
+        @await Html.PartialAsync("~/Views/Shared/_ProductsPartial.cshtml", item)
+    }
+
+Ex:
+1. Created a new MVC Core Project
+	"CorePartialDemo"
+2. Goto 
+          wwwRoot
+3. Add a new folder "Images"
+4. Add existing images into folder
+             [wwwRoot/Images]
+5. Goto "Models" folder and add
+	      "Product.cs"
+  public class Product
+    {
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public double Price { get; set; }
+        public string Photo { get; set; }
+    }
+
+	"ProductsData.cs"
+ public class ProductsData
+    {
+        public IEnumerable<Product> GetProducts
+        {
+            get
+            {
+                List<Product> products = new List<Product>()
+                {
+                    new Product { ProductId=1, Name="Samsung TV", Price=45000.55, Photo="~/Images/tv.jpg"},
+                    new Product { ProductId=2, Name="Mobile", Price=12000.55, Photo="~/Images/mobile.jpg"},
+                    new Product { ProductId=3, Name="Nike Casuals", Price=6000.55, Photo="~/Images/shoe.jpg"},
+                    new Product { ProductId=4, Name="Lee Cooper Boot", Price=2000.55, Photo="~/Images/shoe1.jpg"},
+                };
+                return products;
+            }
+        }
+    }
+
+6. Goto "Views/Shared"
+7. Add a Partial View by name
+	"_ProductsPartial.cshtml"
+@model  Product
+<div class="card">
+    <div class="card-header text-center">
+        <h3>@Model.Name</h3>
+    </div>
+    <div class="card-body">
+        <img src="@Url.Content(Model.Photo)" width="100" height="100"/>
+    </div>
+    <div class="card-footer">
+        <h4>@Model.Price</h4>
+        <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.ProductId" class="btn btn-link">Details</a>
+    </div>
+</div>
+
+8. Add a new controller
+	"ProductsController"
+using CorePartialDemo.Models;
+public class ProductsController : Controller
+    {
+        ProductsData db = new ProductsData();
+        public IActionResult Index()
+        {
+            return View(db.GetProducts);
+        }
+        public ViewResult Details(int id)
+        {
+            return View(db.GetProducts.Single(x => x.ProductId == id));
+        }
+    }
+9. Add View for Index
+	    "Index.cshtml"
+@model IEnumerable<Product>
+
+<h2>Products Catalog</h2>
+<div class="card-deck">
+    @foreach (var item in Model)
+    {
+        <partial name="~/Views/Shared/_ProductsPartial.cshtml" for="@item" />
+    }
+</div>
+
+10. Add View for Details
+	"Details.cshtml"
+@model Product
+<h1>Details</h1>
+<partial name="~/Views/Shared/_ProductsPartial.cshtml" for="@Model" />
