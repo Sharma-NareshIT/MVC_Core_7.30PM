@@ -1,0 +1,109 @@
+Partial Tag Helper Attributes:
+1. name
+2. for  : you can pass model that contains data.
+3. model : assign a model instance to pass data into partial view. You can directly pass data while rendering partial view.
+
+Syntax:
+	      "Details.cshtml"
+<div>
+    <partial name="~/Views/Shared/_ProductsPartial.cshtml" model='new Product { ProductId=2, Name="Samsung Mobile", Price=34000.44, Photo="~/Images/mobile.jpg" }' />
+</div>
+
+4. view-data  : Assigns a ViewDataDictionary to pass into partial view. We can use the ViewData to change the behavior of partial view dynamically.
+
+Syntax:
+          @ViewData["name"] = value
+
+          <partial  name="viewName"  view-data="ViewData">
+
+3.  Form Tag Helper <form>
+        [@Html.BeginForm() - @Html.AntiForgeryToken]
+- Form Tag Helper is new in MVC Core
+- It generates a HTML <form> element
+- It defines form method and action dynamically.
+- It automatically generates RequestVerification token inside the form. [It is a hidden field]
+- It prevents request forgery.
+
+Form Tag Helper Attributes:
+1. asp-controller  ]  defines the action for form, i.e
+2. asp-action        ]  where to submit the data.
+3. method	            ]   It specifies the form method
+4. asp-route         ]  defines the route name to submit
+	               instead of controller and action.
+
+Syntax:
+<div>
+    <form method="post" asp-controller="Products" asp-action="Index">        
+        <h2>Register</h2>
+        <button>Submit</button>
+    </form>
+</div>
+
+Form Action attribute used for <form> Tag Helper with Form Elements:
+
+FAQ: How you can design a <form> without "action" but it can submit to any specific controller method?
+A. We can do that by using "formaction" attribute. or by using "asp-route" attribute.
+     Define "formaction" for button and the path to submit.
+   Ex:
+<div>
+    <form method="post">        
+        <h2>Register</h2>
+        <button formaction="/Products/Index" >Submit to Index</button>
+        <button formaction="/Products/Details/2"> Submit to Details</button>
+    </form>
+</div>
+
+     Define "asp-route" for button and the route name to submit.
+
+Ex:
+- Define route for Products Index action
+
+        [Route("/Products/Index", Name ="ProdIndex")]
+        public IActionResult Index()
+        {
+            return View(db.GetProducts);
+        }
+- Access the route in form
+<div>
+    <form method="post">        
+        <h2>Register</h2>
+        <button asp-route="ProdIndex" >Submit to Index</button>
+    </form>
+</div>
+
+Note : "asp-route" is going to generate "formaction" finally.
+
+4. Input Tag Helper
+ - It generates HTML <input> 
+ - It provides attributes so that the input can change dynamically according to the data and datatype.
+ - It can bind with model data. [earlier we have to use strongly typed helper for data binding].
+- It can work as both
+	@Html.TextBoxFor()
+	@Html.EditorFor()
+- Input type will be changed according to datatype.
+
+.NET Type		Input Type
+==========================================
+Bool		type=checkbox
+String		type=text
+DateTime		type=datatime-local
+Byte		type=number
+Int		type=number
+Single, Double	type=number
+
+.NET Annotation	 Input Type
+===========================================
+[EmailAddress]	 type=email
+[Url]		 type=url
+[HiddenInput]	 type=hidden
+[Phone]		 type=tel
+[DataType(DataType.Password)]    type=password
+[DataType(DataType.Date)]	     type=date
+[DataType(DataType.Time)]	     type=time
+
+Input TagHelper Attribute
+1. "asp-for"  : It is used to bind a model Property , it is 
+	similar to   [model=>model.Name]
+
+   @Html.EditorFor(model=> model.Name)
+   <input type="text"  asp-for="Name">
