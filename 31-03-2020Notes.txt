@@ -1,0 +1,124 @@
+Ex: <input> Tag Helper with "asp-for" attribute
+
+1. Add a new Model Class
+	      "RegisterUser.cs"
+using System.ComponentModel.DataAnnotations;
+namespace CorePartialDemo.Models
+{
+    public class RegisterUser
+    {
+        public string UserName { get; set; }
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+        public int Age { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
+        public bool IsIndian { get; set; }
+    }
+}
+
+2. Add a new Controller Method
+
+public class DemoController : Controller
+    {
+        public ViewResult Register() => View();
+    }
+
+3. Add View for Register method
+	          "Register.cshtml"
+@model RegisterUser
+
+<div class="container">
+    <form>
+        <dl>
+            <dt>User Name</dt>
+            <dd><input asp-for="UserName" /></dd>
+            <dt>Password</dt>
+            <dd><input asp-for="Password" /></dd>
+            <dt>Age</dt>
+            <dd><input asp-for="Age" /></dd>
+            <dt>Date of Birth</dt>
+            <dd><input asp-for="DateOfBirth" /></dd>
+            <dt>Email</dt>
+            <dd><input asp-for="Email" /></dd>
+            <dt> Indian</dt>
+            <dd><input asp-for="IsIndian" /> </dd>
+        </dl>
+        <button class="btn btn-primary">Register</button>
+    </form>
+</div>
+
+5. Label Tag Helper  
+    [ 
+     - Html.DisplayNameFor() 
+     - Html.LabelFor()
+    ]  Mvc 5
+
+ - It is used to display field name. 
+ - It is bound to Model Field Name.
+ - If any annotation is changing the field name in Model class that will effect the Label UI.
+
+Syntax:
+   Model Class:
+        [EmailAddress]
+        [DisplayName("Email Address")]
+        public string Email { get; set; }  
+  cshtml:
+        <label asp-for="Email"> </label>
+
+6. Link Tag Helper
+    It is used to link favicons and stylesheets to a webpage.
+   
+Link Attributes:
+a)  rel   :  It defines the relation, which can be
+	shortcut icon, stylesheet.
+
+b) href  : It specifies the path and name of file to link.
+      
+c) asp-fallback-href:  The URL of a css stylesheet to fallback to , when the primary URL has failed.
+
+Syntax:
+<head>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" crossorigin="anonymous" asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.css" >
+</head>
+
+Note: Configuring of Stylesheets for CSHTML page requires <environment> tag helper 
+
+7. Environment Tag Helper
+    - It conditionally renders content according the current environment
+    - It specifies content to include or exclude from development, production and testing.
+
+Ex:
+<head>
+   <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstap.min.css" crossorigin="anonymous" asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.css">
+    </environment>
+</head>
+
+8. Script Tag Helper: It is similar to link but used for "JavaScript and Jquery Files"
+ 
+Attributes:
+a) src
+b) asp-fallback-src
+
+Syntax:
+ <script src="...cdn.."  asp-fallback-src="..local..">
+ </script>
+
+9. TextArea Tag Helper :
+   It is used for displaying Multiline Text.
+   It is similar to "Html.TextAreaFor()"
+
+Syntax:
+   <textarea  asp-for="address">
+   </textarea>
+
+        [MinLength(10)]
+        [MaxLength(1000)]
+        public string Address { get; set; }
+
+10. Select Tag Helper  [DropDown and List]
