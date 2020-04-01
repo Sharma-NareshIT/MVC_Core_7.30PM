@@ -1,0 +1,115 @@
+Select Tag Helper
+- It generates HTML <select> element.
+- It is similar to 
+	@Html.DropDownListFor()
+	@Html.ListBoxFor()
+- It is strongly typed with dynamic data.
+- <select> contains <options>
+- Dynamically the options are defined as "SelectListItem".
+- SelectListItem class is defined in 
+      "Microsoft.AspNetCore.Mvc.Rendering"
+- YOu can bind the model field by using
+	"asp-for"
+- You can bind the list by using "asp-items"
+
+Syntax:
+<select asp-for="Field" asp-items="listName">
+</select>
+
+- To configure <select> into a listbox you can use
+      size  :  It changes to listbox but user can select
+	only one option.
+      multiple: It changes to listbox and user can
+	    select multiple options.
+
+Syntax:
+   <select size="3"> </select>
+   <select multiple> </select>
+
+Ex:
+1. Goto "RegisterUser.cs" and add following
+
+      using Microsoft.AspNetCore.Mvc.Rendering;
+
+       public string City { get; set; }
+
+        public List<SelectListItem> cities = new List<SelectListItem>()
+        {
+            new SelectListItem { Text="Hyd", Value="Hyderabad" },
+            new SelectListItem { Text="Delhi", Value="Delhi"}
+        };
+
+2. Goto "DemoController" 
+using CorePartialDemo.Models;
+
+public class DemoController : Controller
+    {
+        public ViewResult Register()
+        {
+            var model = new RegisterUser();
+            model.City = "Delhi";
+            return View(model);
+        }
+   }
+
+3. Goto "Register.cshtml"
+
+@model RegisterUser
+
+<dt>City </dt>
+<dd>
+<select asp-for="City" asp-items="Model.cities"> </select>
+</dd>
+
+Validation Message Tag Helper
+Validation Summary Tag Helper
+==========================
+- They are bound to model field
+- They are used to display the model validation error message.
+- They are similar to
+     @Html.ValidationMessageFor()
+     @Html.ValidationSummary()
+- The validation Tag helpers in MVC core as defined to a container like <span>
+- The attribute for <span> or any container <div>
+  is  "asp-validation-for"
+
+ <span asp-validation-for="fieldName"> </span>
+ <div asp-validation-summary="options"> </div>
+
+ ValidationSummary.All         Property and model level.
+ ValidationSummary.ModelOnly  Model level
+ ValidationSummary.None  Disables validation 		           		           summary
+
+Note: Validation Summary is display by verifying the ModelValidation state.
+
+
+Syntax:
+  <div asp-validation-summary="ModelOnly"> </div>
+
+
+Ex:
+ 1. Goto  "RegisterUser.cs"
+
+      [Required(ErrorMessage ="User Name Required")]
+      public string UserName { get; set; }
+
+        [DataType(DataType.Password)]
+        [RegularExpression(@"(?=.*[A-Z])\w{4,10}", ErrorMessage ="Password 4 to 10 with 1 uppercase letter required")]
+        public string Password { get; set; }
+
+ 2. Register.cshtml
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+ <dt>User Name</dt>
+ <dd><input asp-for="UserName" />
+  <span class="text-danger" asp-validation-for="UserName"></span>
+ </dd>
+ <dt>Password</dt>
+ <dd><input asp-for="Password" />
+ <span class="text-danger" asp-validation-for="Password"></span>
+ </dd>
+
+	     Entity Framework Core
