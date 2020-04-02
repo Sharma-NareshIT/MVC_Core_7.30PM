@@ -1,0 +1,57 @@
+	         Entity Framework Core
+- Entity Framework Code is a complete re-building of Entity Framework.
+- It is not next version of Entity Framework 6x.
+- It is completely new.
+- It is re-written.
+- The first release of Entity Framework Core was in June 2016.  [ EF Core 1.0 ]
+
+- EF Core is a lightweight, extensibile, open source and cross platform version of popular Entity Framework Data access technology.
+
+- EF Core support asynchronous that allows unblocking mechanism implictiy with data binding.
+
+What is Missing in EF Core?
+1. EDMX / Graphical Visualization of Model
+2. No more Model First Approach.
+3. No more Entity Data Model Wizards
+    [Step by Step Guidence]
+4. No more automated migrations
+5. No more stored procedure mapping with DBContext.
+
+New Features of EF Core:
+-------------------------------------
+1. Easy relationship configuration
+2. Batch Insert, Update and Delete operations.
+3. In-memory provider for testing, which makes unit testing more better.
+4. Suopport for IoC (Inversion of Control)
+5. Unique Constraints
+6. Shadow Properties
+7. Alternate Keys, which allow for Indexing.
+8. DbContext Pooling, for reducing the round trips.
+9. Asynchronous properties and methods
+10. Modular library
+
+Entity Framework Core Library:
+
+Database	          Package
+===========================================
+Sql Server  Microsoft.EntityFrameworkCore.SqlServer
+MySql	  MySql.Data.EntityFrameworkCore
+PostgreSql Npgsql.EntityFrameworkCore.PostgreSQL
+SQLite	  Microsoft.EntityFrameworkCore.SQLite
+SQL Compact  EntityFrameworkCore.SqlServerCompact40
+In-memory  Microsoft.EntityFrameworkCore.InMemory
+
+Data Annotation Library is Same as EF 6+
+===================================
+System.ComponentModel
+System.ComponentModel.DataAnnotations.Schema
+System.ComponentModel.DataAnnotations
+
+
+    Entity Framework Core Code First Approach
+    ====================================
+     
+Developers will design the domain specific classes according to business requirements. So that Entity Framework can  Generate DataBase and Tables according to the business specifications.
+
+
+
