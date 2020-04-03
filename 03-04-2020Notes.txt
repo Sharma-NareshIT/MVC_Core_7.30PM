@@ -1,0 +1,106 @@
+Entity Framework Code First Approach 
+================================
+ According to the domain classes Entity Framework will generate database and tables.
+
+
+1. Create a new Project [3.1 version]
+2. Select Web Application [MVC Core Template]
+	  "MvcCodeFirst"
+	   
+3. Install Packages
+      Microsoft.EntityFrameworkCore.SqlServer 3.1.0
+	- DbContext, DbSet
+      Microsoft.EntityFramework.Tools  3.1.0
+	- Commands for Entity Framework
+
+4. Create Model Classes in "Models" folder
+	      "Category.cs"
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+namespace MvcCodeFirst.Models
+{
+    [Table("tblCategories")]
+    public class Category
+    {
+        [Key]
+        public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
+        public ICollection<Product> Products { get; set; }
+    }
+}
+	      "Product.cs"
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+namespace MvcCodeFirst.Models
+{
+    [Table("tblProducts")]
+    public class Product
+    {
+        [Key]
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public Nullable<decimal> Price { get; set; }
+        public Category Category { get; set; }
+    }
+}
+
+5. Create a Context Class with DbSet in Models folder
+	       "MvcDbContext.cs"
+using Microsoft.EntityFrameworkCore;
+namespace MvcCodeFirst.Models
+{
+    public class MvcDbContext : DbContext
+    {
+       public DbSet<Category> tblCategories { get; set; }
+       public DbSet<Product> tblProducts { get; set; }
+    }
+}	          
+
+6. We have to define a connection string for Context.
+7. You can define connection string in Middleware configuration file "Startup.cs"
+8. You have to configure connectionString as a sevice and provide to DbContext.
+
+	    "Startup.cs"
+using MvcCodeFirst.Models;
+using Microsoft.EntityFrameworkCore;
+
+ public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllersWithViews();
+
+            var strcon = @"Data Source=(local); Initial Catalog=MvcCoreDb; user id=sa; password=123";
+
+            services.AddDbContext<MvcDbContext>(options => options.UseSqlServer(strcon));
+        }
+
+9. Goto "MvcDbContext" class in models and access the Context Options defined in Middleware services.
+
+10. You can access Middleware Context options in the Context class by using "DbContextOptions"
+
+11. Pass the context options into base class constructor.
+
+	     "MvcDbContext.cs"
+using Microsoft.EntityFrameworkCore;
+namespace MvcCodeFirst.Models
+{
+    public class MvcDbContext : DbContext
+    {
+       public MvcDbContext(DbContextOptions options)
+            :base(options)
+        {
+
+        }
+       public DbSet<Category> tblCategories { get; set; }
+       public DbSet<Product> tblProducts { get; set; }
+    }
+}
+
+12. Business Logic [Domain Classes] is ready
+
+13. Goto Tools Menu --> Package Manager -> Package Manager Console
+
+PM> Add-Migration  InitialCreate
+        [It creates a migration file that contains queries for creating database and tables]
+
+PM> Update-Database
+       [It will execute the query files and generates database and tables]
