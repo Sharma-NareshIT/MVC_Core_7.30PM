@@ -1,0 +1,36 @@
+Entity Framework Core - Code First Approach
+Entity Framework Core - Database First Approach
+============================================
+- In Database first Approach Entity framework can generate all the logic required to interact with database and Table.
+- You have to specify the connection with data source using EF commands.
+
+1.  Create a new ASP.NET Core Application
+	"EntityDbFirst"
+2. Select template
+	"Web Application (MVC)"
+3. Install the packages
+	- Microsoft.EntityFrameworkCore.SqlServer
+	- Microsoft.EntityFrameworkCore.Tools
+
+4. Goto "Tools Menu → Nuget Package Manager → Package Manager Console
+
+Syntax:
+PM> Scaffold-DbContext  [ConnectionString] [ProviderName] -[OutputDir  FolderName]
+
+5. Type the following command in PM Console
+
+PM>Scaffold-DbContext "Data Source=(local); Initial Catalog=MvcCoreDb; user id=sa; password=123" Microsoft.EntityFrameworkCore.SqlServer 
+-OutputDir Models
+
+
+
+
+
+
+
+
+
+
+
+
+
