@@ -1,0 +1,171 @@
+Entity Framework Core DB First Approach:
+
+1. Create a new MVC core application
+
+	"EFdbFirst"
+
+2. Install Packages
+	Microsoft.EntityFrameworkCore.SqlServer
+	Microsoft.EntityFrameworkCore.Tools
+
+3. Goto "Tools Menu → Nuget Package Manager → Package Manager Console"
+
+  PM> Scaffold-DbContext  "Data Source=(local); Initial Catalog=MvcCoreDb; user id=sa; password=123"  Microsoft.EntityFrameworkCore.SqlServer  
+-OutputDir Models
+
+4. This will generate the classes into Models folder.
+        Context Class  : MvcCoreDbContext
+        Model Class     : TblCategories, TblProducts
+        DbSet                : TblCategories, TblProducts
+
+5. Configure the connection and context in Middleware "Startup.cs"
+
+using Microsoft.EntityFrameworkCore;
+using EFdbFirst.Models;
+
+ public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllersWithViews();
+
+            services.AddDbContext<MvcCoreDbContext>(options => options.UseSqlServer("Data Source=(local); Initial Catalog=MvcCoreDb; user id=sa; password=123"));
+        }
+
+To interact and mainpulate the Entity Data "Entity Framework Core" provides several properties and methods.
+
+Member		Description
+===========================================
+ToListAsync()	It is an asynchronous iterator
+		used to perform interation over
+		any collection and return the list
+		of values in collection.
+
+FindAsync()	It is an asynchronous entity
+		method used to server for a 
+		value in primary key field.
+
+SingleAsync()	It is an asynchronous method
+		which iterates over a collection
+		and returns single value based
+		on the condition specified.
+
+Update()		It is a model function used to
+		update the model changes and
+		bind to the model object.
+
+Remove()		It is used to remove any specific
+		record from entity.
+
+Add()		It is used to add a new record
+		into entity.
+
+SaveChangesAsync()  It is an ansynchronous method
+		   that saves and commits the
+		   changes in context.
+
+6. Add a new Controller into Project
+	"CategoriesController"
+using EFdbFirst.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace EFdbFirst.Controllers
+{
+    public class CategoriesController : Controller
+    {
+        private MvcCoreDbContext  _dbContext;
+       public CategoriesController(MvcCoreDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        public async Task<ViewResult> Index()
+        {
+            List<TblCategories> categories =await _dbContext.TblCategories.ToListAsync();
+            return View(categories);
+        }
+    }
+}
+	
+7. Add View for Categories Index action
+		"Index.cshtml"
+
+@model List<TblCategories>
+
+<h2>Categories List</h2>
+<ol>
+    @foreach(var item in Model)
+    {
+        <li><a asp-controller="Products" asp-action="Index" asp-route-id="@item.CategoryId"> @item.CategoryName</a>
+       </li>
+    }
+</ol>
+
+8. Add another controller by name
+	 "ProductsController"
+using EFdbFirst.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace EFdbFirst.Controllers
+{
+    public class ProductsController : Controller
+    {
+        private MvcCoreDbContext _dbContext;
+        public ProductsController(MvcCoreDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        public async Task<IActionResult> Index(int? id)
+        {
+            if(id==null)
+            {
+                return BadRequest();
+            }
+            List<TblProducts> products = await _dbContext.TblProducts.Where(x => x.CategoryId == id).ToListAsync();
+            return View(products);
+        }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if(id==null)
+            {
+                return BadRequest();
+            }
+            TblProducts product = await _dbContext.TblProducts.FindAsync(id);
+            if(product==null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+    }
+}
+
+9.Add View for Products Index action
+	 "Index.cshtml"
+@model List<TblProducts>
+
+<h2>Products List</h2>
+<ol>
+    @foreach(var item in Model)
+    {
+        <li><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">@item.Name</a></li>
+    }
+</ol>
+<br />
+<a asp-controller="Categories" asp-action="Index">Back to Categories</a>
+
+10. Add View for Products Details action
+	  "Details.cshtml"
+@model TblProducts
+<h2>Details</h2>
+<dl>
+    <dt>Product Id</dt>
+    <dd>@Model.ProductId</dd>
+    <dt>Name</dt>
+    <dd>@Model.Name</dd>
+    <dt>Price</dt>
+    <dd>@Model.Price</dd>
+</dl>
+<br />
+<a asp-controller="Products" asp-action="Index" asp-route-id="@Model.CategoryId">Back to Products</a>
+
+
+
+	
