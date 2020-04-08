@@ -1,0 +1,293 @@
+Entity Framework Core Async Methods:
+
+Method		Description
+==========================================
+FindAsync()	It searches the table for specified value in Primary Key
+		field using unblock mechanism.
+Update()		It updates the model by
+		binding with new values.
+
+SaveChangesAsync()  It saves the changes in
+		   context using unblocking
+		   method.
+[Bind()]		It is used to define the meta
+		data for binding with model.
+
+   Enitity Framework Core CRUD in Mvc Core
+   ===================================
+
+Step-1: Prepare Database and Table
+	Database Name	: MvcDb
+	Table Name	: tblProducts
+             
+              ProductId int [PK] - Auto Generated
+              Name  varchar
+              Price   money [nullable]
+
+Step-2: Create Mvc Core Project
+             - Select New Project
+             - Asp.Net Core Web Application
+                    Name	:  CoreCRUD
+	  Version  :   2.2 [core framework]
+                    Template:  MVC  
+            - No Https
+
+Step-3:  Install Entity Framework 
+            - Goto NuGet Packages
+            - Search "Microsoft Enitity Framework Core Sql Server"
+            - Choose the version  "2.2" or below
+
+Step-4: Create Model Classes
+             - Goto "Models" folder and add a class
+	            "Product.cs"
+using System.ComponentModel.DataAnnotations.
+           Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace CoreCRUD.Models
+{
+    [Table("tblProducts")]
+    public class Product
+    {
+        [Key]
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public decimal? Price { get; set; }
+    }
+}
+   - Add another class into Models folder by name
+
+	    "MvcDbContext.cs"
+
+using Microsoft.EntityFrameworkCore;
+namespace CoreCRUD.Models
+{
+    public class MvcDbContext : DbContext
+    {
+        public MvcDbContext(DbContextOptions<MvcDbContext> options)
+            :base(options)
+        {
+        }
+  public DbSet<Product> ProductsTable { get; set; }
+    }
+}
+
+Step-5: Add ConnectionString in 
+	        "appsettings.json"
+
+"ConnectionStrings": {
+    "MvcDbConnection": "Data Source=(local); database=MvcDb; user id=sa; password=123"
+  }
+
+Step-6: Configure Middleware in
+	         "startup.cs"
+
+using Microsoft.EntityFrameworkCore;
+using CoreCRUD.Models;
+
+     public void ConfigureServices(......)
+        {
+          // add below services.AddMvc()
+
+         services.AddDbContext<MvcDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MvcDbConnection")));
+        }
+
+Step-7: Add a new Controller by name
+	       "ProductsController"
+
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using CoreCRUD.Models;
+
+namespace CoreCRUD.Controllers
+{
+    public class ProductsController : Controller
+    {
+        private MvcDbContext context;
+        public ProductsController(MvcDbContext dbContext)
+        {
+            context = dbContext;
+        }
+
+        public IActionResult Index()
+        {
+            return View(context.ProductsTable.ToList());
+        }
+
+    public async Task<IActionResult> Details(int? id)
+        {
+            if(id==null)
+            {
+                return BadRequest();
+            }
+            var product = await context.ProductsTable.FindAsync(id);
+            if(product==null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("ProductId,Name,Price")]Product product)
+        {
+            if(ModelState.IsValid)
+            {
+                context.ProductsTable.Add(product);
+                await context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+        }
+
+        public async  Task<IActionResult> Edit(int? id)
+        {
+            if(id==null)
+            {
+                return BadRequest();
+            }
+            var product = await context.ProductsTable.FindAsync(id);
+            if(product==null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,Name,Price")] Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                context.Update(product);
+                await context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+        }
+
+     public async Task<IActionResult> Delete(int? id)
+        {
+          // same as edit...
+        }
+        [HttpPost]
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirm(int id)
+        {
+            var product = await context.ProductsTable.FindAsync(id);
+            context.ProductsTable.Remove(product);
+            await context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+    }
+}
+
+Step-8: Add Views for Actions
+	             "Index.cshtml"
+ @model  IEnumerable<CoreCRUD.Models.Product>
+
+<h2>Products Index</h2>
+<div>
+    <a asp-controller="Products" asp-action="Create" class="btn btn-primary"> Create    </a>
+</div>
+<br />
+<table class="table table-hover">
+    <thead class="table-primary">
+    <th>
+        @Html.DisplayNameFor(model => model.Name)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Price)
+    </th>
+    <th>Actions</th>
+   </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Price</td>
+                <td>
+                <a class="btn btn-primary" 
+                 asp-action="Details" 
+                 asp-route-id="@item.ProductId"> 
+                 Details </a>
+                 <a class="btn btn-success" 
+                  asp-action="Edit" 
+                  asp-route-id="@item.ProductId"> 	Edit</a>
+                 <a class="btn btn-danger" 
+                   asp-action="Delete" 
+                   asp-route-id="@item.ProductId">                   Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+	         "Details.cshtml"
+@model  CoreCRUD.Models.Product
+<h1>Details</h1>
+<dl class="row">
+    <dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Name)    </dt>
+    <dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Name)</dd>
+
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Price)     </dt>
+    <dd class="col-sm-10">
+     @Html.DisplayFor(model => model.Price)</dd>
+</dl>
+<br />
+<a asp-controller="Products" asp-action="Index">Back to Index</a>
+<span> | </span>
+<a asp-controller="Products" asp-action="Edit" asp-route-id="@Model.ProductId">Edit</a>
+
+	       "Create.cshtml"
+@model  CoreCRUD.Models.Product
+<h1>Create</h1>
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <div>
+            <input type="text" asp-for="Name" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Price"></label>
+        <div>
+            <input type="text" asp-for="Price" class="form-control" />
+        </div>
+    </div>
+    <button class="btn btn-primary"> Create </button>
+</form>
+<br />
+<a asp-controller="Products" asp-action="Index">Back to Index</a>
+	  
+	         "Edit.cshtml"
+  <!--  code same as create  add following into form element -->
+      <input type="hidden" asp-for="ProductId" />
+  
+	         "Delete.cshtml"
+@model CoreCRUD.Models.Product
+
+<h1>Are you sure want to Delete?</h1>
+<form asp-action="Delete">
+    <input type="hidden" asp-for="ProductId" />
+    <dl class="row">
+         <!-- code similar to details datalist -->
+    </dl>
+   <button class="btn btn-primary"> Delete </button>
+    <a class="btn btn-danger" asp-controller="Products" asp-action="Index">     Cancel </a>
+</form>
+
+
+
+
+
+
+
