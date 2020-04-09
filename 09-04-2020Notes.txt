@@ -1,0 +1,109 @@
+	     Validation in Mvc Core
+- Validations are defined at Model Level in MVC.
+- MVC uses UnObtrusive Validation, which handles both client side and server side.
+- MVC uses JQuery UnObstrusive validation plugin.
+- Validation Attributes are:
+
+Attribute		Description
+===========================================
+[CreditCard]	Validates that the property
+		has a value in credit card number
+		format.
+[Compare]	Validates that two properties
+		in a model are matching.
+[EmailAddress]	Validates email format.
+[Phone]		Validates phone number format
+		[US format]
+[Range]		Validates numeric range 
+		contraints for value in a field.
+[RegularExpression]  It validates the format of value
+		  by matching it with a pattern.
+[Required]	 It validates and ensures that
+		 the property value in not null.
+[StringLength]	 Validates a no of chars in a 		string.
+[Url]		 Validates URL format
+[Remote]		It validates input on the client
+		by calling an action method
+		on server the server.
+
+- Validation Tag Helpers
+   <span asp-validation-for="">
+   <span asp-validation-summary="All">
+
+- To verify the model state validation in controller you have to use the property
+	        "ModelState.IsValid"
+
+Ex:
+1. Goto Model class "Product.cs"
+
+  [Table("tblProducts")]
+    public class Product
+    {
+        [Key]
+        public int ProductId { get; set; }
+        [Required(ErrorMessage ="Name Required")]
+        public string Name { get; set; }
+        [Range(1000,100000,ErrorMessage = "Price 1000 to 1 lak only")]
+        public decimal? Price { get; set; }
+    }
+
+2. Goto Products Controller - Create Method on Post
+
+[HttpPost]
+        public async Task<IActionResult> Create([Bind("Name", "Price")]Product product)
+        {
+            if(ModelState.IsValid)
+            {
+                _dbContext.ProductsTable.Add(product);
+                await _dbContext.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+        }
+
+3. Goto "Create.cshtml"
+
+@model Product
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+<style>
+    .validation-summary-valid span {
+        display:none;
+    }
+</style>
+
+
+<h1>Create</h1>
+<form method="post" style="width:300px">
+    <div class="form-group">
+        <label>Name</label>
+        <div>
+            <input type="text" asp-for="Name" class="form-control"/>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Price</label>
+        <div>
+            <input type="text" asp-for="Price" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <button class="btn btn-primary btn-block">Create</button>
+    </div>
+    <div class="text-danger" asp-validation-summary="All" class="form-group">
+        <span>Please check the following Errors:</span>
+    </div>
+</form>
+<br />
+<a asp-controller="Products" asp-action="Index">Back to Index</a>
+
+JQuery / Angular JS / Angular
+
+
+
+
+
