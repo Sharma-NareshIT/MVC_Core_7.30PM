@@ -1,3 +1,83 @@
+Ex: Client Side Interactions and Validations using JavaScript
+
+	     "Delete.cshtml"
+@model Product
+    <script>
+        function VerifyDelete() {
+            var x = confirm("Are You Sure? Want to Delete");
+            if (x == true) {
+                document.frmDelete.submit();
+            } else {
+                return false;
+            }
+        }
+    </script>
+    <form method="post" name="frmDelete">
+        <h1>Delete</h1>
+        <div class="form-group">
+            Are you sure what to Delete ?
+        </div>
+        <div class="form-group">
+            <input type="hidden" asp-for="ProductId" />
+            <dl>
+                <dt>Name</dt>
+                <dd>@Model.Name</dd>
+                <dt>Price</dt>
+                <dd>@Model.Price</dd>
+            </dl>
+        </div>
+        <div class="form-group">
+            <button onclick="return VerifyDelete()" class="btn btn-danger">Yes</button>
+            <a asp-controller="Products" asp-action="Index" class="btn btn-success">No</a>
+        </div>
+ </form>
+
+	              Angular Js
+- It is an JavaScript based Framework.
+- Angular Js uses client side MVC.
+- Model is Data in JSON format
+- View is HTML
+- Controller is the logic [JavaScript Logic]
+
+Install / Enable Angular Js for MVC Project:
+1. Install Package for "Angular Js.Core" for Nuget Package Manager. [1.7.9]
+2. Goto the site
+	"www.angularjs.org"
+3. Select "Download"
+4. Goto "Other Downloads"
+5. Right Click on "angular.js" and save link as 
+6. Save into your "wwwRoot/lib/angular" folder
+
+Angular JS Components
+1. Directives
+2. Filters
+3. Factories
+4. Services
+5. Controller
+6. Model
+7. View etc..
+
+Note: Angular JS is used for building SPA [Single Page Applications]. 
+          SPA is , user will stay on single page and gets access to everything on to the page. New details are added to page without reloading the complete page.
+
+Ex: Enable Angular JS and Configure Client side MVC
+		home.cshtml
+<script src="~/lib/angular/angular.js"></script>
+<div ng-app>
+    <div>
+        Addition : {{10+20}}
+    </div>
+    <div>
+        Multiply : {{4 * 10}}
+    </div>
+</div>
+
+ng-app	: It defines the scope of angular application
+ng-model  : It creates a model reference to store value
+	  of any element.
+ng-bind     : It is used to bind the model data to view.
+
+Ex:
 <script src="~/lib/angular/angular.js"></script>
 <div ng-app>
    <form style="width:300px; border:1px solid darkcyan; box-shadow:2px 4px 4px darkcyan; padding:10px; float:left">
@@ -31,3 +111,11 @@
    </div>
    
 </div>
+
+
+
+
+
+
+
+
