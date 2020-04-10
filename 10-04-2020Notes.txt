@@ -1,0 +1,33 @@
+<script src="~/lib/angular/angular.js"></script>
+<div ng-app>
+   <form style="width:300px; border:1px solid darkcyan; box-shadow:2px 4px 4px darkcyan; padding:10px; float:left">
+     <dl>
+         <dt>Name</dt>
+         <dd><input type="text" class="form-control" ng-model="product.Name" /></dd>
+         <dt>Price</dt>
+         <dd><input type="text" class="form-control" ng-model="product.Price" /></dd>
+         <dt>Is In Stock</dt>
+         <dd><input type="checkbox" ng-model="product.IsInStock" /> Yes</dd>
+         <dt>Shipped To</dt>
+         <dd>
+             <select class="form-control" ng-model="product.ShippedTo">
+                 <option>Delhi</option>
+                 <option>Hyderabad</option>
+             </select>
+         </dd>
+     </dl>
+   </form>
+   <div style="margin-left:30px; padding:10px; float:left; width:300px; border:1px solid darkcyan; box-shadow:2px 4px 4px darkcyan">
+       <dl>
+           <dt>Name</dt>
+           <dd ng-bind="product.Name"></dd>
+           <dt>Price</dt>
+           <dd ng-bind="product.Price"></dd>
+           <dt>Stock</dt>
+           <dd>{{(product.IsInStock==true)?"Available":"Out of Stock"}}</dd>
+           <dt>Shipped To</dt>
+           <dd ng-bind="product.ShippedTo"></dd>
+       </dl>
+   </div>
+   
+</div>
