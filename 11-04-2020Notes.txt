@@ -1,0 +1,146 @@
+	      Angular JS Integration
+- Angular Module
+	A module is collection of several components like, controllers, models, filters, services etc.
+	Angular provides several built-in modules like ngRoute, ngSanitize, ngMessages, etc..
+
+	Angular also allows to create custom modules. We can create modules my using "angular.module()".
+
+	Modules are assigned to your application by using the directive "ng-app".
+
+Syntax:
+      var app = angular.module("moduleName", [Dependencies]);
+	
+
+	         Angular Controller
+	It is the core component in MVC framework, which comprises of application specific logic. Usually controller in Angular Js comprises of JavaScript functions.
+	Controller is applied to document by using "ng-controller" directive.
+
+  app.controller("ControllerName", function($scope) {
+	$scope.property=value;
+	$scope.method= function() { }
+   }
+
+
+Ex:
+<script src="~/lib/angular/angular.js"></script>
+<script>
+  var app = angular.module("DemoApp", []);
+  app.controller("HomeController", function ($scope) {
+         $scope.product = {
+            Name: "Samsung TV",
+            Price: 45000.55
+        };
+    })
+</script>
+<div class="container" ng-app="DemoApp" ng-controller="HomeController">
+    <dl>
+        <dt>Name</dt>
+        <dd>{{product.Name}}</dd>
+        <dt>Price</dt>
+        <dd>{{product.Price}}</dd>
+    </dl>
+</div>
+
+Angular Js Events are similar to JavaScript Events:
+ng-click		= onclick
+ng-change	= onchange
+ng-mouseover	= onmouseover etc..
+
+Syntax:
+     <button ng-click="f1()"> Submit </button>
+
+     <script>
+        var app = angular.module("DemoApp", []);
+        app.controller("DemoController", function($scope){
+                  $scope.f1 = function() { } 
+        } 
+
+
+Ex:
+<script src="~/lib/angular/angular.js"></script>
+<script>
+  var app = angular.module("DemoApp", []);
+  app.controller("HomeController", function ($scope) {
+        $scope.username = "";
+        $scope.msg = "";
+        $scope.SubmitClick = function () {
+            $scope.msg = "Hello ! " + $scope.username;
+        }
+    })
+</script>
+<div class="container" ng-app="DemoApp" ng-controller="HomeController">
+    <fieldset>
+        <legend>User Name</legend>
+        <div class="form-inline">
+            <input type="text" ng-model="username" class="form-control" />
+            <button ng-click="SubmitClick()" class="btn btn-primary">Submit</button>
+        </div>
+    </fieldset>
+    <br />
+    <h2 class="text-primary text-center">{{msg}}</h2>
+</div>
+
+
+Angular  JS can consume data from any URL by using "$http" service.
+
+Ex:
+ 1. Add a new Controller in EntityCRUD project
+	  "AngularDemoController"
+using EntityCRUD.Models;
+using Microsoft.EntityFrameworkCore;
+
+ public class AngularDemoController : Controller
+    {
+        private ProductsContext _dbContext;
+        public AngularDemoController(ProductsContext context)
+        {
+            _dbContext = context;
+        }
+       public async Task<JsonResult> GetProducts()
+        {
+            List<Product> products = await _dbContext.ProductsTable.ToListAsync();
+            return Json(products);
+        }
+
+        public ViewResult ProductDetails() => View();
+
+    }
+
+2. Add View for "ProductDetails"
+
+<script src="~/lib/angular/angular.js"></script>
+<script>
+    var app = angular.module("DemoApp", []);
+    app.controller("HomeController", function ($scope, $http) {
+        $scope.products = [];
+        $scope.url = "http://localhost:62164/AngularDemo/GetProducts";
+
+        $http.get($scope.url)
+            .then(function (response) {
+                $scope.products = response.data;
+            })
+    })
+</script>
+<div class="container" ng-app="DemoApp" ng-controller="HomeController">
+    <fieldset>
+        <legend>Products Data</legend>
+       
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Product Id</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in products">
+                    <td>{{item.productId}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.price}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+
+</div>
