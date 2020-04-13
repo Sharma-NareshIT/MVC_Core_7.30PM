@@ -1,0 +1,133 @@
+	          Filtering and Sorting
+- Angular JS provides filters, which you can used for formatting, filtering and sorting the data.
+- Angular JS filters are
+	1. number
+	2. currency
+	3. uppercase
+	4. lowercase
+	5. filter
+	6. orderBy
+	7. limitTo
+	8. date
+
+
+Filters are applied to data by using "|" pipe.
+	
+uppercase / lowercase : Filters used to convert data into lower and uppercase.
+
+number : To display numeric value with decimal placess and thousand separator.
+
+currency : It is similar to number but have currncey
+	symbol.
+
+date  : It is used to convert into short or long date
+	format
+
+limitTo: It limits the result to the number of records defined. Over iteration it will loop and display only specific number of records.
+
+filter: It is used to search for your value and display only the records that are matching with value.
+
+orderBy: It is used to sort the data based on specified field. It uses a boolean value for "reverse".
+
+Ex: Got EntityCRUD of MVC core project
+
+1. Add a new Controller
+	"DemoController"
+using Microsoft.EntityFrameworkCore;
+using EntityCRUD.Models;
+
+namespace EntityCRUD.Controllers
+{
+    public class DemoController : Controller
+    {
+        private ProductsContext _dbContext;
+        public DemoController(ProductsContext context)
+        {
+            _dbContext = context;
+        }
+        public async Task<JsonResult> GetProducts()
+        {
+            List<Product> products = await _dbContext.ProductsTable.ToListAsync();
+
+            return Json(products);
+        }
+        public ViewResult Index() => View();
+    }
+}
+
+2. Add View for Index 
+		"Index.cshtml"
+<script src="~/lib/angular/angular.js"></script>
+<script>
+    var app = angular.module("DemoApp", []);
+    app.controller("HomeController", function ($scope, $http) {
+        $scope.products = [];
+        $scope.url = "http://localhost:62164/Demo/GetProducts";
+        $http.get($scope.url).then(function (response) {
+            $scope.products = response.data;
+        })
+    })
+</script>
+<div class="container" ng-app="DemoApp" ng-controller="HomeController">
+    <h2>Products List 
+    <span>
+        <input type="number" min="1" max="{{products.length}}" ng-model="records" /> Records / Page
+    </span> 
+    </h2>
+    <table class="table table-hover" style="width:400px; float:left">
+        <thead>
+            <tr>
+                <th>Product Id</th>
+                <th>Name</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in products | limitTo:records | filter:search | orderBy:sort:reverse">
+                <td>{{item.productId}}</td>
+                <td>{{item.name|uppercase}}</td>
+                <td>{{item.price|currency:'&#8377;'}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="width:200px; float:left; border:1px solid darkcyan; padding:10px; margin-left:30px;">
+        <dl>
+            <dt>Search Product</dt>
+            <dd>
+                <input type="text" class="form-control" ng-model="search" />
+            </dd>
+            <dt>Order By</dt>
+            <dd>
+                <select class="form-control" ng-model="sort">
+                    <option value="productId">Id</option>
+                    <option value="name">Name</option>
+                    <option value="price">Price</option>
+                </select>          
+            </dd>
+            <dd>
+                <input type="checkbox" ng-model="reverse" /> Reverse
+            </dd>
+        </dl>
+    </div>
+</div>
+
+	        Angular JS Validations
+
+Angular JS provides services for validation.
+Angular JS can handle validations
+	a) Form State
+	b) Input State
+
+Form State Validation Services 
+1. $pristine
+2. $dirty
+3. $invalid
+4. $valid
+5. $submitted
+
+
+
+
+
+
+
