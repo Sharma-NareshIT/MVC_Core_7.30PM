@@ -1,0 +1,160 @@
+	      Angular Validation Services
+1. Form State Validation
+2. Input State Validation
+
+Form State Validation: It validates entire form i.e all fields in the form are verified simultaneously at the same time.
+
+Validation Service		Description
+============================================
+$pristine		It returns true if form not
+		modified. No change 
+		identified in the value of any
+		field.
+
+$dirty		It returns true if change identified
+		in any field.
+
+$valid		It return true when all fields are
+		valid
+
+$invalid		It returns true when any one field
+		is invalid.
+
+$submitted	It returns true when form 
+		submitted.
+
+Syntax:
+	formName.$pristine
+
+Ex: 
+1. Add a new Action Method
+		"Create"
+2. Add view for method
+		Create.cshtml
+<script src="~/lib/angular/angular.js"></script>
+<style>
+    button:disabled {
+        cursor:not-allowed;
+    }
+    button {
+        cursor:grab;
+    }
+</style>
+@model Product
+
+    <div ng-app>
+        <h2>Create</h2>
+        <form method="post" name="frmCreate" novalidate>
+            <div class="form-group">
+                <label>Name</label>
+                <div>
+                    <input class="form-control" type="text" asp-for="Name" required ng-model="Name" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Price</label>
+                <div>
+                    <input type="text" class="form-control" asp-for="Price" ng-model="Price" required />
+                </div>
+            </div>
+            <div class="form-group">
+                <button ng-disabled="frmCreate.$invalid"  class="btn btn-primary btn-block">Create</button>
+            </div>
+        </form>
+        <br />
+        <dl>
+            <dt>Pristine [No Change Identified ]</dt>
+            <dd>{{frmCreate.$pristine}}</dd>
+            <dt>Dirty [Change Identified]</dt>
+            <dd>{{frmCreate.$dirty}}</dd>
+            <dt>Invalid</dt>
+            <dd>{{frmCreate.$invalid}}</dd>
+            <dt>Valid</dt>
+            <dd>{{frmCreate.$valid}}</dd>
+            <dt>Submitted</dt>
+            <dd>{{frmCreate.$submitted}}</dd>
+        </dl>
+    </div>
+
+Input State Validation: It is verifying every field individually.
+
+$pristine
+$dirty
+$invalid
+$valid
+$touched		: got focus and blured
+$untouched
+
+Syntax:
+	formName.controlName.$pristine
+
+
+In angular js you can add or remove any element into page by using "ng-if". It uses a boolean value "true/false".
+
+Ex:
+<script src="~/lib/angular/angular.js"></script>
+<style>
+    button:disabled {
+        cursor:not-allowed;
+    }
+    button {
+        cursor:grab;
+    }
+</style>
+@model Product
+
+    <div ng-app>
+        <h2>Create</h2>
+        <form method="post" name="frmCreate" novalidate>
+            <div class="form-group">
+                <label>Name</label>
+                <div>
+                    <input class="form-control" type="text" asp-for="Name" required ng-model="Name" />
+                    <span class="text-danger" ng-if="frmCreate.Name.$touched && frmCreate.Name.$invalid">Name Required</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Price</label>
+                <div>
+                    <input type="text" class="form-control" asp-for="Price" ng-model="Price" required />
+                    <span class="text-danger" ng-if="frmCreate.Price.$touched && frmCreate.Price.$invalid">Price Required</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <button ng-disabled="frmCreate.$invalid"  class="btn btn-primary btn-block">Create</button>
+            </div>
+        </form>
+    </div>
+
+Show Validation on Submit:
+
+<span class="text-danger" ng-if="frmCreate.$submitted && frmCreate.Name.$invalid">
+Name Required</span>
+
+What if a input element is having multiple validations?
+
+Issue:
+ <input type="text" required minlength="10" pattern="[A-Z]{10,15}">
+   <span ng-if="frm.control.$invalid"> 
+ 
+ Span is displayed for every problem. User can't identify the exact problem.
+
+Solution:  Instead of $invalid you can use "$error" , it is used to identify specific error.
+	$error.required
+	$error.pattern
+	$error.minlength
+	$error.email
+
+Ex:
+<div>
+<input class="form-control" type="text" asp-for="Name" required ng-model="Name" pattern="[A-Z]{4,10}" minlength="4" />
+                    <span class="text-danger" ng-if="frmCreate.Name.$error.required">Name Required</span>
+                    <span class="text-danger" ng-if="frmCreate.Name.$error.pattern">Name In Block Letters Only 4 to 10 chars</span>
+                    <span class="text-danger" ng-if="frmCreate.Name.$error.minlength">Name too short..</span>
+                </div>
+		Web API
+Web API 2
+Web API Core
+
+
+
