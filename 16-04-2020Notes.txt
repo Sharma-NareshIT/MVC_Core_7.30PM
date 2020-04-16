@@ -1,0 +1,153 @@
+Web API 2 
+Enitity Framework 6
+.NET Framework 4.7
+ASP.NET 4.7
+
+1. Create a new Project
+     "ASP.NET Web Application [.NET Framework]"
+
+2. Select Template
+	"Web API"
+
+3. Install Enitity Framework 6
+
+4. Add Connection String in Web.Config file
+
+<connectionStrings>
+    <add name="MvcDbConnection" providerName="System.Data.SqlClient" connectionString="Data Source=(local); Initial Catalog=MvcDb; user id=sa; password=123"/>
+  </connectionStrings>
+
+5. Goto Models folder and add 
+	          "Product.cs"
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebAPIdemo.Models
+{
+    [Table("tblProducts")]
+    public class Product
+    {
+        [Key]
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public decimal? Price { get; set; }
+    }
+}
+
+	       "MvcDbContext.cs"
+using System.Data.Entity;
+
+namespace WebAPIdemo.Models
+{
+    public class MvcDbContext : DbContext
+    {
+        public MvcDbContext()
+            :base("MvcDbConnection")
+        {
+
+        }
+       public DbSet<Product> ProductsTable { get; set; }
+    }
+}
+
+6. Add a new API Controller into Project
+
+    - Right Click on Controllers folder
+    - Add → New → Controller
+    - Select "Web API 2 Empty Controller"
+    - Name it as "ProductsController"
+
+Note: 
+ a) Library for Web API comes from
+	"System.Web.Http"
+ b) API Controller is derived for "ApiController" base
+    
+  GET	- Fetch Data
+  POST	- Submit Data
+  PUT	- Modify
+  DELETE  - Remove
+
+ c) Action methods in API Controller are derived from "IHttpActionResult" and they return JSON formatted data on Http Response Code.
+
+  d) API action method will not return view, partial view etc..
+  e) API action returns status code i.e OK, NotFound
+   
+	  "ProductsController.cs"
+
+using System.Web.Http;
+using WebAPIdemo.Models;
+
+namespace WebAPIdemo.Controllers
+{
+    public class ProductsController : ApiController
+    {
+        MvcDbContext db = new MvcDbContext();
+
+        // GET - api/products
+        public IQueryable<Product> GetProducts()
+        {
+            return db.ProductsTable;
+        }
+
+        // GET - api/products/1
+        public IHttpActionResult GetProduct(int? id)
+        {
+            if(id==null)
+            {
+                return BadRequest();
+            }
+            Product product = db.ProductsTable.Find(id);
+            if(product ==null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+    }
+}
+
+7. Run the application and test in Postman
+
+8. Add a new HTML file into project
+	"Index.html"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/jquery-3.3.1.js"></script>
+    <script>
+        $(function () {
+            $("button").click(function () {
+                var apiuri = "api/products";
+                var products = [];
+                $.getJSON(apiuri, function (data) {
+                    products = data;
+                    $.each(products, function (key, value) {
+                        $(`<tr><td>${value.Name}</td><td>${value.Price}</td></tr>`).appendTo("#tbody");
+                    })
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+    <button>Get Products</button>
+    <br />
+    <table border="1" width="400">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+    </table>
+</body>
+</html>
+
+
+
+
