@@ -1,0 +1,276 @@
+1. Create  ASP.NET MVC Project [ MVC 5 ]
+2. Select the template "Web API"
+	Project Name : WebApiDemo
+3. Goto Web.config 
+
+<connectionStrings>
+    <add name="MvcDbConnection" providerName="System.Data.SqlClient" connectionString="Data Source=(local); Initial Catalog=MvcDb; user id=sa; password=123"/>
+  </connectionStrings>
+
+4. Install ADO.NET Entity Framework 6 from Nuget
+
+5. Goto Models and add
+	         "Product.cs"
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebAPIdemo.Models
+{
+    [Table("tblProducts")]
+    public class Product
+    {
+        [Key]
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public decimal? Price { get; set; }
+    }
+}
+	  "MvcDbContext.cs"
+using System.Data.Entity;
+
+namespace WebAPIdemo.Models
+{
+    public class MvcDbContext : DbContext
+    {
+        public MvcDbContext()
+            :base("MvcDbConnection")
+        {
+
+        }
+       public DbSet<Product> ProductsTable { get; set; }
+    }
+}
+
+6. Add a new Controller : "Web API 2 Empty"
+
+	       "ProductsController"
+
+using System.Web.Http;
+using WebAPIdemo.Models;
+
+namespace WebAPIdemo.Controllers
+{
+    public class ProductsController : ApiController
+    {
+        MvcDbContext db = new MvcDbContext();
+
+        // GET - api/products
+        public IQueryable<Product> GetProducts()
+        {
+            return db.ProductsTable;
+        }
+
+        // GET - api/products/1
+        public IHttpActionResult GetProduct(int? id)
+        {
+            if(id==null)
+            {
+                return BadRequest();
+            }
+            Product product = db.ProductsTable.Find(id);
+            if(product ==null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+         // POST - api/products/addproduct
+        [HttpPost]
+        public IHttpActionResult AddProduct(Product product)
+        {
+            
+            db.ProductsTable.Add(product);
+            db.SaveChanges();
+            return Ok("Record Inserted");
+        }
+    }
+}
+
+7. Add a new HTML Page with JQuery Integration
+
+	            "index.html"
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="Content/bootstrap.css" />
+    <style>
+        .details {
+            position:fixed;
+            right:20px;
+            top:10px;
+            border:1px solid darkcyan;
+            padding:20px;
+        }
+    </style>
+    <script src="Scripts/jquery-3.3.1.js"></script>
+    <script>
+        $(function () {
+            var apiurl = "api/products";
+            $(".details").hide();
+            $("#btnShow").click(function () {
+                var products = [];
+                $.getJSON(apiurl, function (data) {
+                    products = data;
+                    $.each(products, function (key, value) {
+                        $(`<tr><td>${value.Name}</td><td>${value.Price}</td></tr>`).appendTo("#tbody");
+                    })
+                })
+            })
+            $("#btnSearch").click(function () {
+                var id = $("#txtId").val();
+                $.getJSON(apiurl + "/" + id, function (data) {
+                    $("#prodid").append(data.ProductId);
+                    $("#name").append(data.Name);
+                    $("#price").append(data.Price);
+                })
+                $(".details").show(3000);
+            })
+            $("#btnSubmit").click(function () {
+                var newProduct = {
+                    Name: $("#txtName").val(),
+                    Price: parseFloat($("#txtPrice").val())
+                };
+                $.ajax({
+                    url: "api/products/AddProduct",
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(newProduct),
+                    dataType: "json",
+                    success: function (response) {
+                        alert("Record Inserted");
+                    },
+                    error: function () {
+                        alert('something went wrong');
+                    }
+                })
+            })
+        })
+    </script>
+</head>
+<body class="container">
+    <h2>Products API</h2>
+    <div class="form-group form-inline">
+        <button class="btn btn-primary" id="btnShow">Show Products</button>
+        <input type="text" id="txtId" class="form-control" placeholder="Product Id" />
+        <button class="btn btn-primary" id="btnSearch">Search</button>
+    </div>
+    <div class="details">
+        <h3>Search Result</h3>
+        <dl>
+            <dt>Product Id</dt>
+            <dd id="prodid"></dd>
+            <dt>Name</dt>
+            <dd id="name"></dd>
+            <dt>Price</dt>
+            <dd id="price"></dd>
+        </dl>
+    </div>
+    <div>
+        <div class="form-group" style="margin-top:100px; width:300px; float:left">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group" style="width:200px; float:left; border:1px solid darkcyan; padding:10px; margin-left:40px">
+           
+                <h3>Add Product</h3>
+                <dl>
+                    <dt>Name</dt>
+                    <dd><input type="text" id="txtName" class="form-control" /></dd>
+                    <dt>Price</dt>
+                    <dd><input type="text" id="txtPrice" class="form-control" /></dd>
+                </dl>
+                <button class="btn btn-primary btn-block" id="btnSubmit">Submit</button>
+            
+        </div>
+    </div>
+</body>
+</html>
+
+Note : To Avoid "CORS" issues while posting data , install "CORS" plugin for browser.
+
+	        "Web API - Angular Js"
+- Install "angular core" library  for project
+	          "home.html"		
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="Content/bootstrap.css" />
+    <style>
+        .card {
+            float:left;
+            margin-left:100px;
+            margin-top: 20px;
+        }
+    </style>
+    <script src="Scripts/angular.js"></script>
+    <script>
+        var app = angular.module("DemoApp", []);
+        app.controller("HomeController", function ($scope, $http) {
+            $scope.products = [];
+            $scope.apiGetUrl = "api/products";
+            $http.get($scope.apiGetUrl).then(function (response) {
+                $scope.products = response.data;
+            })
+            $scope.SubmitClick = function (product) {
+                $http.post("/api/products/AddProduct", product);
+                alert("Record Inserted");
+                location.reload();
+            }
+        })
+    </script>
+</head>
+<body ng-app="DemoApp" ng-controller="HomeController" class="container">
+   <div class="card-deck" >
+       <div class="card">
+           <h2>Products List</h2>
+           <table class="table table-hover">
+               <thead>
+                   <tr>
+                       <th>Name</th>
+                       <th>Price</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   <tr ng-repeat="item in products | filter:search">
+                       <td>{{item.Name | uppercase}}</td>
+                       <td>{{item.Price | currency:'&#8377;'}}</td>
+                   </tr>
+               </tbody>
+           </table>
+       </div>
+       <div class="card">
+           <form method="post" ng-submit="SubmitClick(product)">
+               <h3>New Product</h3>
+               <dl>
+                   <dt>Name</dt>
+                   <dd><input type="text" class="form-control" name="Name" ng-model="product.Name" /></dd>
+                   <dt>Price</dt>
+                   <dd><input type="text" class="form-control" name="Price" ng-model="product.Price" /></dd>
+               </dl>
+               <button class="btn btn-primary">Add</button>
+           </form>         
+       </div>
+       <div class="card">
+            <h2>Search Product</h2>
+            <dl>
+                <dt>Name</dt>
+                <dd><input class="form-control" type="text" ng-model="search" /></dd>
+            </dl>
+       </div>
+   </div>
+</body>
+</html>
+
+
+
