@@ -1,0 +1,265 @@
+	             Web API Core
+1. Create a new "ASP.NET Core Project"
+2. Select "API" Template
+3. Install the package
+      "Microsoft.EntityFrameworkCore.SqlServer"
+      "Microsoft.EntityFrameworkCore.Tools"
+
+4. Goto "appSettings.json" and add ConnectionString
+
+ "ConnectionStrings": {
+    "MvcDbConnection":  "Data Source=(local); Initial Catalog=MvcDb; user id=sa; password=123"
+  }
+
+5. Create  Models folder in project and add 
+	         "Product.cs"
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebApiCoreDemo.Models
+{
+    [Table("tblProducts")]
+    public class Product
+    {
+        [Key]
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public decimal? Price { get; set; }
+    }
+}
+
+	 "ProductsContext.cs"
+using Microsoft.EntityFrameworkCore;
+
+namespace WebApiCoreDemo.Models
+{
+    public class ProductsContext : DbContext
+    {
+        public ProductsContext(DbContextOptions options)
+            :base(options)
+        {
+
+        }
+       public DbSet<Product> ProductsTable { get; set; }
+    }
+}
+
+6. Goto "Startup.cs"
+using Microsoft.EntityFrameworkCore;
+using WebApiCoreDemo.Models;
+
+ public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+            services.AddDbContext<ProductsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MvcDbConnection")));
+        }
+
+  public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+
+7. Add "wwwroot" folder into project with
+	         "index.html"
+
+8. Add a new Controller
+	      "API Empty Controller"
+
+9. Name it as "ProductsController"
+
+using Microsoft.AspNetCore.Mvc;
+using WebApiCoreDemo.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace WebApiCoreDemo.Controllers
+{
+    [Route("api/products")]
+    [ApiController]
+    public class ProductsController : ControllerBase
+    {
+        private ProductsContext _dbContext;
+        public ProductsController(ProductsContext context)
+        {
+            _dbContext = context;
+        }
+        [HttpGet]
+        //api/products
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        {
+            return await _dbContext.ProductsTable.ToListAsync();
+        }
+        [HttpPost]
+        //api/products/AddProduct
+        public async Task<ActionResult<Product>> AddProduct(Product product)
+        {
+            _dbContext.ProductsTable.Add(product);
+            await _dbContext.SaveChangesAsync();
+            return Ok();
+        }
+    }
+}
+
+10. Goto "Index.html" in wwwRoot folder
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.js"></script>
+    <script>
+        $(function () {
+            var products = [];
+            $.getJSON("api/products", function (data) {
+                products = data;
+                $.each(products, function (key, value) {
+                    $(`<tr><td>${value.name}</td><td>${value.price}</td></tr>`).appendTo("#tbody");
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+    <h2>Products List</h2>
+    <table border="1" width="400">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+    </table>
+</body>
+</html>
+
+        Enable  cross-origin requests in WebAPI 2
+
+
+1. Goto WebAPI project
+
+2. Install CORS Package from NuGet
+
+     Microsoft.AspNet.WebApi.Cors
+
+3. Goto "WebApiConfig.cs" in "App_Start" folder
+
+ public static void Register(HttpConfiguration config)
+        {
+	config.EnableCors(); 
+                  ...............
+        }
+
+4. Goto API Controller  "ProductsController"
+
+using System.Web.Http.Cors;
+
+ [EnableCors(origins: "http://mysiteService.com", headers: "*", methods:"*")]
+    public class ProductsController : ApiController
+    {
+	// your api methods
+    }
+
+   Enable  cross-origin requests in WebAPI Core
+
+1. Goto "Middleware configuration" in startup.cs
+
+ readonly string CustomCorsConfiguration = "_customCorsConfiguration";
+
+ public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "CustomCorsConfiguration",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://mysiteservice.com");
+                        
+                    });
+            });
+            services.AddControllers();
+            services.AddDbContext<ProductsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MvcDbConnection")));
+        }
+
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+            app.UseCors(CustomCorsConfiguration);
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+
+2. Goto API Controller
+
+using Microsoft.AspNetCore.Cors;
+
+[EnableCors("CustomCorsConfiguration")]
+    public class ProductsController : ControllerBase
+    {
+    }
+
+
+	ASP.NET Core with Angular 9
+1. Create by using .NET core CLI
+
+      > dotnet  new angular  -o  shoppingApp
+
+2. Create by using Visual Studio Template
+
+     - Create a new Project
+     - ASP.NET Core Web Application
+     - Select "Angular" Template
+
+3. ASP.NET Core Project contains "ClientApp" folder, which comprises of Angular Application.
+
+4. Angular Application Version will be some default version like : 8.2 
+
+5. You can upgrade to latest
+
+    - Install Node JS for [NPM]  "nodejs.org"
+    - Install Angular CLI
+	> npm install -g @angular/cli@latest
+	> ng  version
+  
+6. Open your ClientApp in command prompt
+
+	>ng update  
+	>ng update @angular/core
+
+7. From Command Prompt run Client App
+	>npm install [installs missing packages]
+	>ng serve
+	  listening on http://localhost:4200
+
+8. Open Browser and Request 
+	http://localhost:4200
+	
+
+
