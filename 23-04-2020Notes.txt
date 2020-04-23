@@ -1,0 +1,128 @@
+-Creating MVC Project with Angular Integration
+1. Create a new "ASP.NET Core Web Application"
+2. Select "Angular" template
+3. Goto "ClientApp" folder and open in command prompt.
+4. Run the following command to Install Packages
+	> npm install
+	
+5. Start Project
+	> ng serve    (or)  npm start
+
+6. Open any browser and request
+	http://localhost:4200
+
+Note: The startup page comes from
+	ClientApp
+	|_src
+	   |_app
+	      |_app.component.ts  : 'app-root'
+	       _app.component.html
+	       _app.component.css
+                 |_index.html
+	      <app-root> </app-root>
+          Angular uses "HttpClientModule" to handle interaction with Web API.
+
+		Unit Testing
+
+- It is one of the key feature of MVC framework.
+- MVC supports Test Driven Development.
+- It is easy for Unit Testing
+- ASP.NET MVC can use various Testing Frameworks
+	a) Microsoft Visual Studio Testing Tools
+	b) X-Unit Tools
+- Testing every component includes the following steps
+	a) Arrange
+	b) Act
+	c) Assert
+
+Arrange  : Creating a reference in order the access
+	component to be tested.
+
+Act          : To specify what to test for imported 
+                  component i.e in MVC application it can
+	 be ViewResult, FileResult, ViewData etc..
+
+Assert    : To verify the returned value and the 	business required value, and assert the 	result i.e passed or failed.
+
+
+Ex:
+1. Create a new ASP.NET MVC Project [.NET Framework]
+2. Select "MVC" Project
+3. Select option "Add Unit Test Project"
+4. Following projects added
+	a) DemoProject	[ MVC ]
+	b) DemoProject.tests
+
+5. Goto MVC Project and add a new controller by name
+	"ProductsController"
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace DemoProject.Controllers
+{
+    public class ProductsController : Controller
+    {
+        // GET: Products
+        public ViewResult Index()
+        {
+            return View();
+        }
+        public ViewResult Details()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
+
+6. Bulild the project
+7. Goto Test Project → Controllers folder
+8. Add a new Class file
+	"ProductsControllerTest"
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DemoProject.Controllers;
+using System.Web.Mvc;
+
+namespace DemoProject.Tests.Controllers
+{
+    [TestClass]
+    public class ProductsControllerTest
+    {
+        [TestMethod]
+        public void Index()
+        {
+            //Arrange
+            var controller = new ProductsController();
+            //Act
+            var result =  controller.Index() as ViewResult;
+            //Assert
+            Assert.IsNotNull(result);
+        }
+        [TestMethod]
+        public void Details()
+        {
+            var controller = new ProductsController();
+            var result = controller.Details() as ViewResult;
+            Assert.IsNotNull(result);
+        }
+    }
+}
+
+
+9. Goto Test Menu → Run All Tests
+
+
+
+
+
+
+
